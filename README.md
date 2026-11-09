@@ -98,7 +98,4 @@ requirements.txt  Python dependencies
 src/              Simulator, experiment runner, and plotting code
 assets/           Figure preview shown in this README
 results/          Runs and plots, created when an experiment is run
-tests/            Simulator and runner checks
 ```
-
-Run the checks with `.venv/bin/python -m unittest discover -s tests -v`.
