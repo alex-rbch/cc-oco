@@ -10,7 +10,7 @@ def main():
     parser.add_argument("--horizon", type=int, help="rounds per run, at least 10000 (default: 1000000)")
     parser.add_argument("--seeds", type=int, help="paired repetitions, starting at seed 100 (default: 100)")
     parser.add_argument("--workers", type=int, default=1, help="parallel repetitions (default: 1)")
-    parser.add_argument("--output", type=Path, default=Path("results"), help="results directory (default: results)")
+    parser.add_argument("--output", type=Path, default=Path("results/paper"), help="results directory (default: results/paper)")
     parser.add_argument("--plot-only", action="store_true", help="plot completed results using their saved settings")
     args = parser.parse_args()
     if args.workers < 1:

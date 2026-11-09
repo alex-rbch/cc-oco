@@ -42,7 +42,7 @@ Markers show regret per round averaged across repetitions, with 95% confidence
 intervals. Horizontal lines show full tracking, which is reused across capacities.
 
 The command runs the simulations and writes the results and figure files to
-`results/`, creating the directory on the first run. Each completed
+`results/paper/`, creating the directory on the first run. Each completed
 repetition is saved. Rerun the same command to reuse completed repetitions and
 finish interrupted work. Adjust `--workers` to change parallelism, or use
 `--output PATH` to choose another output directory.
