@@ -42,7 +42,7 @@ Markers show regret per round averaged across repetitions, with 95% confidence
 intervals. Horizontal lines show full tracking, which is reused across capacities.
 
 The command runs the simulations and writes the results and figure files to
-`results/paper/`, creating the directory on the first run. Each completed
+`results/`, creating the directory on the first run. Each completed
 repetition is saved. Rerun the same command to reuse completed repetitions and
 finish interrupted work. Adjust `--workers` to change parallelism, or use
 `--output PATH` to choose another output directory.
@@ -58,10 +58,10 @@ For a shorter experiment with both loss families:
 
 | Option | Use |
 | --- | --- |
-| `--horizon` | Rounds per run; at least 10,000 (default: 1,000,000) |
-| `--seeds` | Paired repetitions, including a single repetition (default: 100) |
-| `--workers` | Parallel repetitions (default: 1) |
-| `--output` | Results directory (default: `results/paper`) |
+| `--horizon` | Rounds per run; at least 10,000 |
+| `--seeds` | Paired repetitions, including a single repetition |
+| `--workers` | Parallel repetitions |
+| `--output` | Results directory |
 
 Both loss families, feedback types, and the four paper capacities are always
 included. Repetitions use consecutive seeds starting at 100. A single repetition
