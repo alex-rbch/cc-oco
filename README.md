@@ -2,7 +2,7 @@
 
 Code for **Capacity-Constrained Online Convex Optimization with Delayed Feedback**.
 
-Compare uniform-weight Bernoulli scheduling, Pareto-type scheduling, and full
+Compare uniform-weight Bernoulli scheduling, Pareto scheduling, and full
 tracking under first-order and bandit feedback. Run the capacity ablation with
 the paper settings or choose your own horizon and number of repetitions.
 
@@ -37,15 +37,6 @@ adds a quadratic term to obtain strongly convex losses. Both families take
 values in [0, 1]. Losses depend on heavy-tailed delays with mean 400, with the
 directional learning signal carried by longer-delay rounds. Losses and delays
 are fixed before play and shared across methods and capacities.
-
-The empirical Pareto baseline uses `P(L >= d) = (1 + d/b_C)^(-1)`, clips lifetimes
-at `T`, and calibrates `sum(d=1,...,T) (1 + d/b_C)^(-1) = 0.75 C`. Retained feedback
-has importance weight `1 + d/b_C`. This calibration differs from the time-varying
-Pareto scheduler in the theoretical results.
-
-Markers show regret per round averaged across repetitions, with 95% confidence
-intervals based on Student's t-distribution. Horizontal lines show full tracking,
-which is reused across capacities.
 
 The command runs the simulations and writes the results and figure files to
 `results/paper/`, creating the directory on the first run. Each completed
