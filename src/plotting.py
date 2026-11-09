@@ -25,8 +25,10 @@ STYLES = {
 def statistics_for(values):
     mean = statistics.fmean(values)
     count = len(values)
-    half_width = float(t.ppf(0.975, count - 1)) * statistics.stdev(values) / math.sqrt(count) if count > 1 else None
-    return dict(n=count, mean=mean, ci95_low=mean - half_width if half_width is not None else None,
+    std = statistics.stdev(values) if count > 1 else None
+    half_width = float(t.ppf(0.975, count - 1)) * std / math.sqrt(count) if count > 1 else None
+    return dict(n=count, mean=mean, std=std,
+                ci95_low=mean - half_width if half_width is not None else None,
                 ci95_high=mean + half_width if half_width is not None else None)
 
 
@@ -52,7 +54,7 @@ def summarize(rows, config):
             if len(set(full)) != 1:
                 raise ValueError("Full-tracking results differ across capacities")
     return dict(horizon=config.horizon, repetitions=len(config.final_seeds), capacities=list(CAPACITIES),
-                uncertainty="Pointwise 95% Student-t intervals across paired repetitions; omitted for one repetition.",
+                uncertainty="Pointwise 95% Student-t confidence intervals for the mean across paired repetitions (n-1 degrees of freedom); omitted for one repetition.",
                 groups=groups)
 
 
@@ -80,7 +82,8 @@ def plot_results(rows, config, output):
                 if scheduler == "full":
                     ax.axhline(means[0], color=color, linestyle=linestyle, linewidth=1.1, zorder=2)
                 else:
-                    errors = [group["ci95_high"] - group["mean"] for group in groups] if len(config.final_seeds) > 1 else None
+                    errors = [[group["mean"] - group["ci95_low"] for group in groups],
+                              [group["ci95_high"] - group["mean"] for group in groups]] if len(config.final_seeds) > 1 else None
                     ax.errorbar(xs, means, yerr=errors, color=color, marker=marker, linestyle=linestyle,
                                 markersize=3.8, markerfacecolor="white", markeredgewidth=0.9,
                                 capsize=1.9, elinewidth=0.65, zorder=4 if scheduler == "uniform" else 3)
@@ -99,9 +102,9 @@ def plot_results(rows, config, output):
             ax.tick_params(length=3, width=0.6, pad=2.5)
     for ax, title in zip(axes[0], ("First-order feedback", "Bandit feedback")):
         ax.set_title(title, fontsize=9.2, pad=4.5)
-    fig.supxlabel(r"Capacity $C$", x=0.5625, y=0.03, fontsize=8.5, fontweight="bold")
+    fig.supxlabel(r"Capacity $C$", x=0.5775, y=0.03, fontsize=8.5, fontweight="bold")
     fig.supylabel(r"Mean regret $R_T/T$", x=0.01, y=0.4875, fontsize=8.5, fontweight="bold")
-    fig.subplots_adjust(left=0.14, right=0.985, bottom=0.135, top=0.84, wspace=0.24, hspace=0.2)
+    fig.subplots_adjust(left=0.17, right=0.985, bottom=0.135, top=0.84, wspace=0.24, hspace=0.2)
     for ax, label in zip(axes[:, 0], ("Convex", "Strongly convex")):
         bounds = ax.get_position()
         fig.text(0.06, (bounds.y0 + bounds.y1) / 2, label, rotation=90,

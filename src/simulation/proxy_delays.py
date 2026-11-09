@@ -36,14 +36,30 @@ def calibrate_pareto_proxy_scale(
     shape: float,
     occupancy_fraction: float,
     relative_tolerance: float = 1e-6,
+    horizon: Optional[int] = None,
 ) -> float:
     if capacity <= 0:
         raise ValueError("capacity must be positive")
-    if shape <= 1.0:
-        raise ValueError("proxy shape must exceed one")
+    if not np.isfinite(shape) or shape < 1.0:
+        raise ValueError("proxy shape must be at least one")
     if not 0.0 < occupancy_fraction <= 1.0:
         raise ValueError("occupancy_fraction must lie in (0, 1]")
     target = occupancy_fraction * capacity
+    if shape == 1.0:
+        if horizon is None or horizon <= target or int(horizon) != horizon:
+            raise ValueError("shape-one calibration requires an integer horizon greater than the target mean")
+        from scipy.optimize import brentq
+        from scipy.special import digamma
+
+
+        def residual(scale: float) -> float:
+            return float(scale * (digamma(scale + horizon + 1) - digamma(scale + 1)) - target)
+
+        high = max(1.0, 10.0 * target)
+        while residual(high) < 0.0:
+            high *= 2.0
+        return float(brentq(residual, 1e-12, high, xtol=1e-12))
+
     low, high = np.finfo(float).tiny, max(1.0, target * (shape - 1.0) * 2.0)
     while _discrete_lomax_mean(high, shape) < target:
         high *= 2.0
@@ -63,9 +79,8 @@ def calibrate_pareto_proxy_scale(
 
 class ParetoProxyGenerator:
 
-
     def __init__(self, shape: float, scale: float) -> None:
-        if shape <= 1.0 or scale <= 0.0:
+        if not np.isfinite(shape) or not np.isfinite(scale) or shape <= 0.0 or scale <= 0.0:
             raise ValueError("invalid Pareto proxy parameters")
         self.shape = float(shape)
         self.scale = float(scale)

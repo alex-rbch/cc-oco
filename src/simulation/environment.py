@@ -200,6 +200,7 @@ def _proxy_for(
             config.capacity,
             config.pareto_proxy_shape,
             config.proxy_occupancy_fraction,
+            horizon=config.horizon,
         )
         return ParetoProxyGenerator(config.pareto_proxy_shape, scale)
     if scheduler == "uniform":

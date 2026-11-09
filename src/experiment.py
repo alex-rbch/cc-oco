@@ -115,9 +115,11 @@ def prepare_settings(output, horizon, seeds, plot_only=False):
     path = output / "config.json"
     if path.exists():
         settings = json.loads(path.read_text())
-        if settings.get("schema_version") != 1 or settings.get("capacities") != list(CAPACITIES) or settings.get("loss_families") != FAMILIES:
+        if settings.get("schema_version") != 2 or settings.get("capacities") != list(CAPACITIES) or settings.get("loss_families") != FAMILIES:
             raise ValueError("Saved experiment settings are incompatible with this runner")
         config = ExperimentConfig.from_dict(settings["base_configuration"])
+        if config.pareto_proxy_shape != 1.0:
+            raise ValueError("Saved results use a different Lomax exponent. Choose a separate --output directory.")
         if (horizon is not None and horizon != config.horizon) or (seeds is not None and seeds != len(config.final_seeds)):
             raise ValueError("This output directory has different settings. Choose a separate --output directory.")
         return config, settings
@@ -128,7 +130,7 @@ def prepare_settings(output, horizon, seeds, plot_only=False):
     config = paper_config(horizon if horizon is not None else 1000000, seeds if seeds is not None else 100)
     print("Preparing delay distribution...", flush=True)
     scale = delay_scales_for_config(config)[400.0]
-    settings = dict(schema_version=1, base_configuration=config.to_dict(),
+    settings = dict(schema_version=2, base_configuration=config.to_dict(),
                     capacities=list(CAPACITIES), loss_families=FAMILIES, delay_scale=scale)
     output.mkdir(parents=True, exist_ok=True)
     atomic_text(path, json.dumps(settings, indent=2, allow_nan=False) + "\n")

@@ -44,7 +44,7 @@ class ExperimentConfig:
     minimum_gradient_magnitude: float = 0.10
     maximum_direction_angle_degrees: float = 90.0
 
-    pareto_proxy_shape: float = 2.5
+    pareto_proxy_shape: float = 1.0
     proxy_occupancy_fraction: float = 0.75
 
     oco_learning_rate_constant: float = 1.0
